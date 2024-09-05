@@ -2,7 +2,7 @@ const std = @import("std");
 const OptionStep = std.build.OptionsStep;
 // Using commit that is compatible with our version of Zig
 // https://github.com/michal-z/zig-gamedev/tree/c8c955ab614610f25b7daf48fa5fee5cc291065d/libs/ztracy
-const ztracy = @import("libs/ztracy/libs/ztracy/build.zig");
+// const ztracy = @import("libs/ztracy/libs/ztracy/build.zig");
 
 pub const BuildOptions = struct {
     print_code_after_compile: bool = false,
@@ -72,6 +72,7 @@ pub fn build(b: *std.build.Builder) void {
     bin.addPackagePath("clap", "libs/zig-clap/clap.zig");
     bin.addOptions("build_options", opt);
     bin.setBuildMode(if (!b.is_release) .Debug else mode);
+    bin.linkLibC();
 
     // For some reason debug symbols weren't showing up, but then I fucked around and
     // one of these at least allows me to see them in Instruments on macos
@@ -103,6 +104,7 @@ pub fn build(b: *std.build.Builder) void {
     main_tests.setBuildMode(mode);
     main_tests.addOptions("build_options", opt);
     main_tests.setFilter(test_filter);
+    main_tests.linkLibC();
     main_tests.install();
 
     const test_step = b.step("test", "Run library tests");
